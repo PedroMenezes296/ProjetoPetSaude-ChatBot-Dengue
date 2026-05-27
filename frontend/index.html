@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PET-Saúde Educação 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pet-orange': '#E05A1B',
+                        'pet-blue':   '#4BAEE8',
+                        'pet-navy':   '#1B3D6B',
+                    }
+                }
+            }
+        }
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        .tab-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .tab-scroll::-webkit-scrollbar { display: none; }
+    </style>
+    <!-- Safelist de classes dinâmicas Alpine.js para o Tailwind Play CDN -->
+    <div class="hidden bg-pet-orange bg-pet-blue bg-pet-navy text-pet-orange text-pet-blue text-pet-navy border-pet-orange border-pet-blue border-pet-navy from-pet-navy to-pet-navy from-pet-blue to-pet-blue from-pet-orange to-pet-orange bg-pet-orange/10 bg-pet-blue/10 bg-pet-navy/5 bg-pet-navy/10 border-pet-blue/30 border-pet-navy/10"></div>
+</head>
+<body
+    class="bg-slate-50 font-sans text-pet-navy antialiased"
+    x-data="app()"
+    x-init="init()"
+    x-cloak
+    :class="currentPage === 'chat' ? 'overflow-hidden' : ''"
+>
+
+    <!-- ===== NAVBAR FIXA ===== -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-pet-navy shadow-lg h-14">
+        <div class="max-w-4xl mx-auto px-3 h-full flex items-center gap-3">
+            <img src="/assets/logo.jpeg" alt="PET-Saúde" class="h-9 w-auto rounded flex-shrink-0">
+            <div class="flex overflow-x-auto tab-scroll flex-1">
+                <div class="flex gap-0.5 min-w-max">
+                    <template x-for="tab in tabs" :key="tab.id">
+                        <button
+                            @click="navigate(tab.id)"
+                            :class="currentPage === tab.id
+                                ? 'text-white border-b-2 border-pet-orange font-semibold'
+                                : 'text-blue-200 hover:text-white border-b-2 border-transparent'"
+                            class="px-3 py-4 text-sm whitespace-nowrap transition-colors"
+                            x-text="tab.label"
+                        ></button>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Espaçador para navbar fixa -->
+    <div class="h-14"></div>
+
+    <!-- ===== SEÇÃO: INÍCIO ===== -->
+    <section
+        x-show="currentPage === 'home'"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 translate-y-1"
+        x-transition:enter-end="opacity-100 translate-y-0"
+    >
+        <!-- Hero -->
+        <div class="bg-gradient-to-br from-pet-navy to-blue-900 text-white py-12 px-4">
+            <div class="max-w-2xl mx-auto text-center">
+                <img src="/assets/logo.jpeg" alt="PET-Saúde Educação 2" class="h-24 w-auto mx-auto mb-5 rounded-xl shadow-lg">
+                <h1 class="text-2xl font-bold">PET-Saúde Educação 2</h1>
+                <p class="text-blue-300 text-sm mt-1">Informação e Saúde Digital</p>
+                <p class="text-blue-100 text-sm leading-relaxed mt-4 max-w-md mx-auto">
+                    Democratizando o acesso à informação em saúde para a comunidade universitária e a população assistida pelas Unidades Básicas de Saúde.
+                </p>
+                <button
+                    @click="navigate('chat')"
+                    class="mt-6 bg-pet-orange hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition-all active:scale-95 text-sm"
+                >
+                    Falar com o ChatBot Dengue
+                </button>
+            </div>
+        </div>
+
+        <!-- Cards de destaque -->
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <h2 class="text-center text-base font-bold text-pet-navy mb-5">O que oferecemos</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 text-center">
+                    <div class="w-11 h-11 bg-pet-blue/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-pet-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-pet-navy mb-1 text-sm">Informação em Saúde</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed">Conteúdos validados por profissionais de saúde sobre doenças prevalentes na nossa região.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 text-center">
+                    <div class="w-11 h-11 bg-pet-orange/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-pet-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-pet-navy mb-1 text-sm">Educação Comunitária</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed">Ações educativas nas UBS e na universidade para promover saúde e cidadania digital.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 text-center">
+                    <div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-pet-navy mb-1 text-sm">ChatBot Dengue</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed">Tire dúvidas sobre dengue com nosso assistente informativo — acessível 24h pelo celular.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Aviso informativo -->
+        <div class="max-w-4xl mx-auto px-4 pb-10">
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3 items-start">
+                <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-amber-800 text-xs leading-relaxed">
+                    Esta é uma ferramenta <strong>educativa e informativa</strong>. Em caso de sintomas graves, procure imediatamente uma Unidade de Saúde ou UPA.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SEÇÃO: SOBRE NÓS ===== -->
+    <section
+        x-show="currentPage === 'sobre'"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 translate-y-1"
+        x-transition:enter-end="opacity-100 translate-y-0"
+    >
+        <div class="bg-gradient-to-r from-pet-navy to-pet-blue text-white py-8 px-4">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="text-xl font-bold">Sobre Nós</h2>
+                <p class="text-blue-100 text-sm mt-1">Conheça o PET-Saúde Educação 2</p>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
+
+            <!-- Missão -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                <h3 class="font-bold text-pet-navy mb-3 flex items-center gap-2 text-sm">
+                    <span class="w-1 h-4 bg-pet-orange rounded-full inline-block"></span>
+                    Nossa Missão
+                </h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    O <strong>PET-Saúde Educação 2</strong> é um grupo vinculado ao Programa de Educação pelo Trabalho para a Saúde (PET-Saúde), com foco em informação, saúde digital e cidadania. Atuamos em parceria com Unidades Básicas de Saúde para levar informação confiável e ações educativas à comunidade, utilizando tecnologia como ferramenta de inclusão e empoderamento em saúde.
+                </p>
+            </div>
+
+            <!-- O que fazemos -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                <h3 class="font-bold text-pet-navy mb-4 flex items-center gap-2 text-sm">
+                    <span class="w-1 h-4 bg-pet-blue rounded-full inline-block"></span>
+                    O que fazemos
+                </h3>
+                <ul class="space-y-2.5 text-sm text-slate-600">
+                    <li class="flex items-start gap-2">
+                        <svg class="w-4 h-4 text-pet-orange flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        Desenvolvimento de ferramentas digitais de conscientização em saúde
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <svg class="w-4 h-4 text-pet-orange flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        Ações educativas presenciais nas UBS da região
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <svg class="w-4 h-4 text-pet-orange flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        Produção de conteúdo informativo sobre doenças endêmicas (dengue, zika, chikungunya)
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <svg class="w-4 h-4 text-pet-orange flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        Integração universidade–comunidade por meio de tecnologias acessíveis
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Membros -->
+            <div>
+                <h3 class="font-bold text-pet-navy mb-4 flex items-center gap-2 text-sm">
+                    <span class="w-1 h-4 bg-pet-orange rounded-full inline-block"></span>
+                    Nossa Equipe
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <template x-for="member in members" :key="member.name">
+                        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-center">
+                            <div
+                                class="w-13 h-13 w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold text-lg"
+                                :class="member.color"
+                            >
+                                <span x-text="member.initials"></span>
+                            </div>
+                            <p class="font-semibold text-pet-navy text-xs leading-tight" x-text="member.name"></p>
+                            <p class="text-slate-400 text-[11px] mt-0.5" x-text="member.role"></p>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Parceiros -->
+            <div class="bg-pet-navy/5 rounded-2xl p-5 border border-pet-navy/10">
+                <h3 class="font-bold text-pet-navy mb-3 text-sm">Vinculado a</h3>
+                <div class="flex flex-wrap gap-2 text-xs text-slate-600">
+                    <span class="bg-white px-3 py-1.5 rounded-full border border-slate-200 font-medium">SUS — Sistema Único de Saúde</span>
+                    <span class="bg-white px-3 py-1.5 rounded-full border border-slate-200 font-medium">Ministério da Saúde</span>
+                    <span class="bg-white px-3 py-1.5 rounded-full border border-slate-200 font-medium">PET-Saúde</span>
+                    <span class="bg-white px-3 py-1.5 rounded-full border border-slate-200 font-medium">Programa Pampa Conectado</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===== SEÇÃO: CHATBOT ===== -->
+    <section
+        x-show="currentPage === 'chat'"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 translate-y-1"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        style="height: calc(100vh - 56px);"
+    >
+        <div
+            x-data="chatApp()"
+            x-init="initChat()"
+            class="flex flex-col max-w-2xl mx-auto bg-white shadow-xl h-full"
+        >
+            <!-- Chat Header -->
+            <div class="bg-pet-blue text-white px-4 py-3 flex justify-between items-center flex-shrink-0 shadow-sm">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-sm leading-tight">ChatBot Dengue</p>
+                        <p class="text-blue-100 text-[11px]">Informações validadas · PET-Saúde</p>
+                    </div>
+                </div>
+                <button
+                    @click="resetChat()"
+                    class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full transition"
+                >
+                    Limpar
+                </button>
+            </div>
+
+            <!-- Banner de emergência -->
+            <template x-if="isEmergency">
+                <div class="bg-red-600 text-white px-4 py-3 animate-pulse flex items-center gap-3 flex-shrink-0">
+                    <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <div>
+                        <p class="font-bold text-xs">ATENÇÃO: SINAL DE ALERTA IDENTIFICADO</p>
+                        <p class="text-[11px] mt-0.5">Procure imediatamente a Unidade de Saúde mais próxima ou UPA.</p>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Área de mensagens -->
+            <main class="flex-1 overflow-y-auto p-4 space-y-3" id="chat-box">
+
+                <!-- Mensagem de boas-vindas -->
+                <div class="flex justify-start">
+                    <div class="bg-slate-100 p-3 rounded-2xl rounded-tl-none text-sm shadow-sm border border-slate-200 max-w-[85%]">
+                        Olá! Sou o assistente informativo sobre a Dengue do PET-Saúde. Como posso te ajudar hoje?
+                    </div>
+                </div>
+
+                <!-- Histórico de mensagens -->
+                <template x-for="(msg, index) in messages" :key="index">
+                    <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+                        <div
+                            class="p-3 rounded-2xl text-sm shadow-sm max-w-[85%]"
+                            :class="msg.role === 'user'
+                                ? 'bg-pet-blue text-white rounded-tr-none shadow-md'
+                                : 'bg-slate-100 border border-slate-200 rounded-tl-none'"
+                        >
+                            <p x-text="msg.text"></p>
+                            <template x-if="msg.source">
+                                <p class="text-[10px] mt-1 opacity-60" x-text="'Fonte: ' + msg.source"></p>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Loading -->
+                <template x-if="isLoading">
+                    <div class="flex justify-start animate-pulse">
+                        <div class="bg-slate-100 p-3 rounded-2xl rounded-tl-none flex gap-1">
+                            <div class="w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
+                            <div class="w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
+                            <div class="w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Botões de menu rápido -->
+                <template x-if="menuItems.length > 0 && !isEmergency && !isLoading">
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <template x-for="item in menuItems" :key="item.title">
+                            <button
+                                @click="sendButton(item.title)"
+                                class="bg-pet-blue/10 text-pet-navy border border-pet-blue/30 px-3 py-1.5 rounded-full text-xs font-medium hover:bg-pet-blue/20 transition active:scale-95"
+                                x-text="item.title"
+                            ></button>
+                        </template>
+                    </div>
+                </template>
+
+            </main>
+
+            <!-- Input do chat -->
+            <footer class="px-3 py-3 bg-white border-t border-slate-200 flex-shrink-0">
+                <form @submit.prevent="sendMessage()" class="flex items-center gap-2">
+                    <div class="relative flex-1">
+                        <input
+                            type="text"
+                            x-model="userInput"
+                            maxlength="250"
+                            placeholder="Digite sua dúvida..."
+                            :disabled="isEmergency || isLoading"
+                            class="w-full bg-slate-100 border-none rounded-full py-2.5 px-4 pr-12 text-sm focus:ring-2 focus:ring-pet-blue disabled:opacity-50 transition"
+                        >
+                        <span class="absolute right-3 top-2.5 text-[10px] text-slate-400" x-text="userInput.length + '/250'"></span>
+                    </div>
+                    <button
+                        type="submit"
+                        :disabled="!userInput.trim() || isEmergency || isLoading"
+                        class="bg-pet-blue text-white p-2.5 rounded-full hover:bg-blue-400 disabled:bg-slate-300 disabled:cursor-not-allowed transition active:scale-90"
+                    >
+                        <svg class="h-5 w-5 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </form>
+                <p class="text-[10px] text-center text-slate-400 mt-1.5">
+                    Ferramenta informativa. Em emergências, procure atendimento médico.
+                </p>
+            </footer>
+        </div>
+    </section>
+
+    <!-- ===== SEÇÃO: EVENTOS ===== -->
+    <section
+        x-show="currentPage === 'eventos'"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 translate-y-1"
+        x-transition:enter-end="opacity-100 translate-y-0"
+    >
+        <div class="bg-gradient-to-r from-pet-navy to-pet-blue text-white py-8 px-4">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="text-xl font-bold">Eventos</h2>
+                <p class="text-blue-100 text-sm mt-1">Participe das nossas ações e atividades</p>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-4 py-8 space-y-4">
+
+            <template x-for="evento in eventos" :key="evento.titulo">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <h3 class="font-bold text-pet-navy text-base leading-tight" x-text="evento.titulo"></h3>
+                            <span
+                                class="flex-shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                                :class="evento.encerrado
+                                    ? 'bg-slate-100 text-slate-500'
+                                    : 'bg-green-50 text-green-700 border border-green-200'"
+                                x-text="evento.encerrado ? 'Encerrado' : 'Em breve'"
+                            ></span>
+                        </div>
+                        <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500 mb-3">
+                            <span class="flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                <span x-text="evento.data"></span>
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <span x-text="evento.local"></span>
+                            </span>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4" x-text="evento.descricao"></p>
+                        <a
+                            :href="evento.link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            :class="evento.encerrado
+                                ? 'bg-slate-100 text-slate-400 pointer-events-none cursor-not-allowed'
+                                : 'bg-pet-orange hover:bg-orange-600 text-white'"
+                            class="inline-block text-sm font-semibold px-5 py-2 rounded-full transition-colors active:scale-95"
+                            x-text="evento.encerrado ? 'Inscrições encerradas' : 'Inscreva-se'"
+                        ></a>
+                    </div>
+                </div>
+            </template>
+
+            <p class="text-center text-sm text-slate-400 pt-2">
+                Todos os eventos são divulgados no nosso
+                <a
+                    href="https://www.instagram.com/petsaude.pampaconectado"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-pet-orange font-medium hover:underline"
+                >Instagram</a>.
+            </p>
+
+        </div>
+    </section>
+
+    <!-- ===== SEÇÃO: NOTÍCIAS ===== -->
+    <section
+        x-show="currentPage === 'noticias'"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 translate-y-1"
+        x-transition:enter-end="opacity-100 translate-y-0"
+    >
+        <div class="bg-gradient-to-r from-pet-navy to-pet-blue text-white py-8 px-4">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="text-xl font-bold">Notícias</h2>
+                <p class="text-blue-100 text-sm mt-1">Fique por dentro das nossas ações</p>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-4 py-8">
+
+            <div class="flex justify-end mb-5">
+                <a
+                    href="https://www.instagram.com/petsaude.pampaconectado"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold px-4 py-2 rounded-full hover:opacity-90 transition"
+                >
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    Ver mais no Instagram
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <template x-for="noticia in noticias" :key="noticia.titulo">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="h-36 flex items-center justify-center" :class="noticia.bgColor">
+                            <svg class="w-10 h-10 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                            </svg>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-[11px] text-slate-400 mb-1" x-text="noticia.data"></p>
+                            <h3 class="font-bold text-pet-navy text-sm leading-tight mb-1.5" x-text="noticia.titulo"></h3>
+                            <p class="text-slate-500 text-xs leading-relaxed mb-3" x-text="noticia.trecho"></p>
+                            <a
+                                :href="noticia.link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="text-pet-orange text-xs font-semibold hover:underline inline-flex items-center gap-1"
+                            >
+                                Ver publicação
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===== FOOTER GLOBAL (oculto no chat) ===== -->
+    <footer x-show="currentPage !== 'chat'" class="bg-pet-navy text-white py-8 px-4 mt-4">
+        <div class="max-w-4xl mx-auto text-center space-y-2">
+            <img src="/assets/logo.jpeg" alt="PET-Saúde" class="h-10 w-auto mx-auto rounded opacity-90">
+            <p class="text-sm font-semibold">PET-Saúde Educação 2</p>
+            <p class="text-blue-300 text-xs">Informação e Saúde Digital</p>
+            <a
+                href="https://www.instagram.com/petsaude.pampaconectado"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-block text-xs text-pet-blue hover:text-white transition"
+            >
+                @petsaude.pampaconectado
+            </a>
+            <p class="text-[11px] text-blue-400 pt-3 border-t border-white/10 mt-2">
+                Esta ferramenta não coleta dados pessoais. Sua privacidade é preservada conforme a LGPD.<br>
+                Ferramenta educativa — não substitui orientação médica profissional.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // ===== COMPONENTE RAIZ — NAVEGAÇÃO =====
+        function app() {
+            return {
+                currentPage: 'home',
+
+                tabs: [
+                    { id: 'home',     label: 'Início'   },
+                    { id: 'sobre',    label: 'Sobre'    },
+                    { id: 'chat',     label: 'ChatBot'  },
+                    { id: 'eventos',  label: 'Eventos'  },
+                    { id: 'noticias', label: 'Notícias' },
+                ],
+
+                members: [
+                    { name: 'Membro 1', role: 'Coordenador',  initials: 'M1', color: 'bg-pet-orange' },
+                    { name: 'Membro 2', role: 'Preceptor(a)', initials: 'M2', color: 'bg-pet-blue'   },
+                    { name: 'Membro 3', role: 'Discente',     initials: 'M3', color: 'bg-pet-navy'   },
+                    { name: 'Membro 4', role: 'Discente',     initials: 'M4', color: 'bg-pet-orange' },
+                    { name: 'Membro 5', role: 'Discente',     initials: 'M5', color: 'bg-pet-blue'   },
+                    { name: 'Membro 6', role: 'Discente',     initials: 'M6', color: 'bg-pet-navy'   },
+                ],
+
+                eventos: [
+                    {
+                        titulo:    'Ação de Conscientização sobre a Dengue',
+                        data:      '15/06/2026',
+                        local:     'UBS Central — Bagé/RS',
+                        descricao: 'Atividade educativa aberta ao público sobre prevenção da dengue, distribuição de material informativo e orientação sobre sintomas e criadouros.',
+                        link:      'https://www.instagram.com/petsaude.pampaconectado',
+                        encerrado: false,
+                    },
+                    {
+                        titulo:    'Palestra: Saúde Digital e Cidadania',
+                        data:      '20/05/2026',
+                        local:    'Universidade — Auditório Principal',
+                        descricao: 'Palestra aberta sobre o uso consciente de tecnologias digitais na promoção da saúde e a importância da informação confiável.',
+                        link:      'https://www.instagram.com/petsaude.pampaconectado',
+                        encerrado: true,
+                    },
+                    {
+                        titulo:    'Workshop: Prevenção de Doenças Endêmicas',
+                        data:      '10/07/2026',
+                        local:     'UBS do Bairro — Local a confirmar',
+                        descricao: 'Workshop interativo com dinâmicas sobre identificação de criadouros e boas práticas de prevenção da dengue, zika e chikungunya.',
+                        link:      'https://www.instagram.com/petsaude.pampaconectado',
+                        encerrado: false,
+                    },
+                ],
+
+                noticias: [
+                    {
+                        titulo:  'Conheça o nosso grupo: Quem Somos Nós?',
+                        trecho:  'O PET-Saúde Informação e Saúde Digital — Pampa Conectado apresenta sua equipe e missão para a comunidade universitária e regional.',
+                        data:    '30 de setembro de 2024',
+                        link:    'https://www.instagram.com/petsaude.pampaconectado',
+                        bgColor: 'bg-gradient-to-br from-pet-navy to-pet-blue',
+                    },
+                    {
+                        titulo:  'Lançamento do ChatBot Dengue',
+                        trecho:  'Desenvolvemos uma ferramenta digital acessível via QR Code para levar informações validadas sobre a dengue a quem mais precisa.',
+                        data:    'Maio de 2026',
+                        link:    'https://www.instagram.com/petsaude.pampaconectado',
+                        bgColor: 'bg-gradient-to-br from-pet-orange to-orange-400',
+                    },
+                    {
+                        titulo:  'Ação nas UBS: Dengue Zero',
+                        trecho:  'Nossa equipe esteve presente nas Unidades Básicas de Saúde distribuindo material educativo e orientando a população sobre a prevenção.',
+                        data:    'Abril de 2026',
+                        link:    'https://www.instagram.com/petsaude.pampaconectado',
+                        bgColor: 'bg-gradient-to-br from-green-600 to-teal-500',
+                    },
+                    {
+                        titulo:  'Parceria com o Ministério da Saúde',
+                        trecho:  'Fortalecemos nossa parceria com o SUS para ampliar o alcance das ações educativas em saúde digital na nossa região.',
+                        data:    'Março de 2026',
+                        link:    'https://www.instagram.com/petsaude.pampaconectado',
+                        bgColor: 'bg-gradient-to-br from-purple-600 to-indigo-500',
+                    },
+                ],
+
+                init() {
+                    const hash = window.location.hash.replace('#', '');
+                    const valid = this.tabs.map(t => t.id);
+                    if (valid.includes(hash)) this.currentPage = hash;
+
+                    window.addEventListener('hashchange', () => {
+                        const h = window.location.hash.replace('#', '');
+                        if (valid.includes(h)) this.currentPage = h;
+                    });
+                },
+
+                navigate(page) {
+                    this.currentPage = page;
+                    window.location.hash = page;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+            }
+        }
+
+        // ===== SUB-COMPONENTE — CHAT =====
+        function chatApp() {
+            return {
+                userInput: '',
+                messages: [],
+                menuItems: [],
+                isLoading: false,
+                isEmergency: false,
+                apiUrl: '/api',
+
+                initChat() {
+                    const saved = sessionStorage.getItem('chat_history');
+                    if (saved) this.messages = JSON.parse(saved);
+                    this.fetchMenu();
+                    this.scrollToBottom();
+                },
+
+                async fetchMenu() {
+                    try {
+                        const res = await fetch(`${this.apiUrl}/menu`);
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        this.menuItems = data.items;
+                    } catch {}
+                },
+
+                async sendMessage() {
+                    if (!this.userInput.trim() || this.isLoading) return;
+                    const text = this.userInput;
+                    this.userInput = '';
+                    this.addMessage(text, 'user');
+                    await this.processChat(text, false);
+                },
+
+                async sendButton(title) {
+                    if (this.isLoading) return;
+                    this.addMessage(title, 'user');
+                    await this.processChat(title, true);
+                },
+
+                async processChat(text, isButton) {
+                    this.isLoading = true;
+                    this.scrollToBottom();
+                    try {
+                        const res = await fetch(`${this.apiUrl}/chat`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ text, is_button: isButton }),
+                        });
+                        if (!res.ok) {
+                            if (res.status === 429) throw new Error('Muitas mensagens enviadas. Aguarde um momento.');
+                            throw new Error('Erro ao processar mensagem.');
+                        }
+                        const data = await res.json();
+                        if (data.is_emergency) this.isEmergency = true;
+                        this.addMessage(data.text, 'bot', data.source);
+                    } catch (err) {
+                        this.addMessage(err.message || 'Ocorreu um erro na comunicação com o servidor.', 'bot');
+                    } finally {
+                        this.isLoading = false;
+                        this.scrollToBottom();
+                    }
+                },
+
+                addMessage(text, role, source = null) {
+                    this.messages.push({ text, role, source });
+                    sessionStorage.setItem('chat_history', JSON.stringify(this.messages));
+                    this.scrollToBottom();
+                },
+
+                resetChat() {
+                    if (confirm('Deseja limpar o histórico da conversa?')) {
+                        this.messages = [];
+                        this.isEmergency = false;
+                        sessionStorage.removeItem('chat_history');
+                    }
+                },
+
+                scrollToBottom() {
+                    setTimeout(() => {
+                        const box = document.getElementById('chat-box');
+                        if (box) box.scrollTop = box.scrollHeight;
+                    }, 50);
+                },
+            }
+        }
+    </script>
+</body>
+</html>
