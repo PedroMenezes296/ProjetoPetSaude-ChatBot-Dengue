@@ -24,9 +24,6 @@ env/
 !.env.example
 
 # Dados
-*.csv
-*.json
-app/data/
 
 # Logs
 *.log
